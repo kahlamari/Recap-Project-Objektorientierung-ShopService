@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,5 +33,36 @@ class ShopServiceTest {
 
         //THEN
         assertNull(actual);
+    }
+
+    @Test
+    void searchByStatusTest_whenOrdersWithStatusPresent_thenReturnOrders() {
+        //GIVEN
+        ShopService shopService = new ShopService();
+        List<String> productsIds = List.of("1");
+        Set<Order> expected = new HashSet<>();
+        expected.add(shopService.addOrder(productsIds));
+        expected.add(shopService.addOrder(productsIds));
+        expected.add(shopService.addOrder(productsIds));
+
+
+        //WHEN
+        List<Order> actual = shopService.searchByOrderStatus(Order.OrderStatus.PROCESSING);
+        Set<Order> actualSet = new HashSet<>(actual);
+
+        //THEN
+        assertEquals(actualSet, expected);
+    }
+
+    @Test
+    void serachByStatusTest_whenOrdersWithStatusNotPresent_thenReturnEmptyList() {
+        //GIVEN
+        ShopService shopService = new ShopService();
+
+        //WHEN
+        List<Order> actual = shopService.searchByOrderStatus(Order.OrderStatus.PROCESSING);
+
+        //THEN
+        assertEquals(List.of(), actual);
     }
 }
