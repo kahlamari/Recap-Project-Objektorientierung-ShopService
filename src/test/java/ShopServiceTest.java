@@ -28,11 +28,12 @@ class ShopServiceTest {
         ShopService shopService = new ShopService();
         List<String> productsIds = List.of("1", "2");
 
-        //WHEN
-        Order actual = shopService.addOrder(productsIds);
+        assertThrows(
+                //THEN
+                NoSuchProductException.class,
 
-        //THEN
-        assertNull(actual);
+                //WHEN
+                ()->shopService.addOrder(productsIds));
     }
 
     @Test
