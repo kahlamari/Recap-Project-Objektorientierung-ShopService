@@ -1,7 +1,6 @@
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -65,5 +64,20 @@ class ShopServiceTest {
 
         //THEN
         assertEquals(List.of(), actual);
+    }
+
+    @Test
+    void updateOrderTest_whenNewOrderStatus_thenNewOrderStatus() {
+        //GIVEN
+        ShopService shopService = new ShopService();
+        List<String> productsIds = List.of("1");
+        Order order = shopService.addOrder(productsIds);
+        Order expected = new Order(order.id(), order.products(), Order.OrderStatus.IN_DELIVERY);
+
+        //WHEN
+        Order actual = shopService.updateOrder(order.id(), Order.OrderStatus.IN_DELIVERY);
+
+        //THEN
+        assertEquals(actual, expected);
     }
 }
