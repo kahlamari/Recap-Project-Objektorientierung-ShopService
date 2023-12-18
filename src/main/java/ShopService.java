@@ -4,13 +4,13 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class ShopService {
     private final ProductRepo productRepo;
     private final OrderRepo orderRepo;
+    private final IdService idService;
 
     public Order addOrder(List<String> productIds) {
         List<Product> products = new ArrayList<>();
@@ -22,7 +22,7 @@ public class ShopService {
             products.add(productToOrder.get());
         }
 
-        Order newOrder = new Order(UUID.randomUUID().toString(), products, Instant.now(), Order.OrderStatus.PROCESSING);
+        Order newOrder = new Order(idService.generateId(), products, Instant.now(), Order.OrderStatus.PROCESSING);
 
         return orderRepo.addOrder(newOrder);
     }

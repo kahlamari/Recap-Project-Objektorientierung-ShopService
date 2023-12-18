@@ -13,7 +13,8 @@ class ShopServiceTest {
     void buildUp() {
         ProductRepo productRepo = new ProductRepo();
         OrderRepo orderRepo = new OrderMapRepo();
-        shopService = new ShopService(productRepo, orderRepo);
+        IdService idService = new IdService();
+        shopService = new ShopService(productRepo, orderRepo, idService);
     }
 
     @Test
