@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -6,11 +7,18 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ShopServiceTest {
+    private ShopService shopService;
+
+    @BeforeEach
+    void buildUp() {
+        ProductRepo productRepo = new ProductRepo();
+        OrderRepo orderRepo = new OrderMapRepo();
+        shopService = new ShopService(productRepo, orderRepo);
+    }
 
     @Test
     void addOrderTest() {
         //GIVEN
-        ShopService shopService = new ShopService();
         List<String> productsIds = List.of("1");
 
         //WHEN
@@ -25,7 +33,6 @@ class ShopServiceTest {
     @Test
     void addOrderTest_whenInvalidProductId_expectNull() {
         //GIVEN
-        ShopService shopService = new ShopService();
         List<String> productsIds = List.of("1", "2");
 
         assertThrows(
@@ -39,7 +46,6 @@ class ShopServiceTest {
     @Test
     void searchByStatusTest_whenOrdersWithStatusPresent_thenReturnOrders() {
         //GIVEN
-        ShopService shopService = new ShopService();
         List<String> productsIds = List.of("1");
         Set<Order> expected = new HashSet<>();
         expected.add(shopService.addOrder(productsIds));
@@ -58,7 +64,6 @@ class ShopServiceTest {
     @Test
     void searchByStatusTest_whenOrdersWithStatusNotPresent_thenReturnEmptyList() {
         //GIVEN
-        ShopService shopService = new ShopService();
 
         //WHEN
         List<Order> actual = shopService.searchByOrderStatus(Order.OrderStatus.PROCESSING);
@@ -70,7 +75,6 @@ class ShopServiceTest {
     @Test
     void updateOrderTest_whenNewOrderStatus_thenNewOrderStatus() {
         //GIVEN
-        ShopService shopService = new ShopService();
         List<String> productsIds = List.of("1");
         Order order = shopService.addOrder(productsIds);
         Order expected = new Order(order.id(), order.products(), order.orderTimestamp(), Order.OrderStatus.IN_DELIVERY);
