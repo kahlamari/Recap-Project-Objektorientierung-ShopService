@@ -56,7 +56,7 @@ class ShopServiceTest {
     }
 
     @Test
-    void serachByStatusTest_whenOrdersWithStatusNotPresent_thenReturnEmptyList() {
+    void searchByStatusTest_whenOrdersWithStatusNotPresent_thenReturnEmptyList() {
         //GIVEN
         ShopService shopService = new ShopService();
 
