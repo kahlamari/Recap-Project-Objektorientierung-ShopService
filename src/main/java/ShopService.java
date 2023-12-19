@@ -11,6 +11,10 @@ public class ShopService {
     private final IdService idService;
 
     public Order addOrder(List<String> productIds) {
+        return addOrderWithId(idService.generateId(), productIds);
+    }
+
+    public Order addOrderWithId(String id, List<String> productIds) {
         List<Product> products = new ArrayList<>();
         for (String productId : productIds) {
             Optional<Product> productToOrder = productRepo.getProductById(productId);
@@ -20,7 +24,7 @@ public class ShopService {
             products.add(productToOrder.get());
         }
 
-        Order newOrder = new Order(idService.generateId(), products, Instant.now(), Order.OrderStatus.PROCESSING);
+        Order newOrder = new Order(id, products, Instant.now(), Order.OrderStatus.PROCESSING);
 
         return orderRepo.addOrder(newOrder);
     }
@@ -45,5 +49,9 @@ public class ShopService {
                     .ifPresent(order -> orderStatusOrderMap.put(orderStatus, order));
         }
         return orderStatusOrderMap;
+    }
+
+    public String printOrdersToString() {
+        return orderRepo.toString();
     }
 }

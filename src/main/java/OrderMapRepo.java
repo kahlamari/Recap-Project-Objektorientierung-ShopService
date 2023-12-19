@@ -23,6 +23,13 @@ public class OrderMapRepo implements OrderRepo{
     }
 
     @Override
+    public String toString() {
+        return "OrderMapRepo{" +
+                "orders=" + orders +
+                '}';
+    }
+
+    @Override
     public void removeOrder(String id) {
         orders.remove(id);
     }
