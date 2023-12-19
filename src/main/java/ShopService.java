@@ -1,5 +1,6 @@
 import lombok.RequiredArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,11 +18,18 @@ public class ShopService {
     public Order addOrderWithId(String id, List<String> productIds) {
         List<Product> products = new ArrayList<>();
         for (String productId : productIds) {
-            Optional<Product> productToOrder = productRepo.getProductById(productId);
-            if (productToOrder.isEmpty()) {
-                throw new NoSuchProductException("Produkt mit der Id: " + productId + " konnte nicht bestellt werden!");
+            Product productToOrder = productRepo.getProductById(productId)
+                    .orElseThrow(() -> new NoSuchProductException("Produkt mit der Id: " + productId + " konnte nicht bestellt werden!"));
+
+            BigDecimal quantity = productRepo.getProductById(productId).get().quantity();
+
+            if (quantity.intValue() == 0) {
+                throw new NoSuchProductException("Produkt mit der Id: " + productId + " ist nicht mehr vorrätig!");
             }
-            products.add(productToOrder.get());
+            Product productNewQuantity = productRepo.getProductById(productId).get().withQuantity(quantity.subtract(new BigDecimal("1")));
+            productRepo.removeProduct(productId);
+            productRepo.addProduct(productNewQuantity);
+            products.add(productToOrder);
         }
 
         Order newOrder = new Order(id, products, Instant.now(), Order.OrderStatus.PROCESSING);

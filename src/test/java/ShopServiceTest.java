@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.*;
 
@@ -8,10 +9,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ShopServiceTest {
     private ShopService shopService;
+    private ProductRepo productRepo = new ProductRepo();
 
     @BeforeEach
     void buildUp() {
-        ProductRepo productRepo = new ProductRepo();
         OrderRepo orderRepo = new OrderMapRepo();
         IdService idService = new IdService();
         shopService = new ShopService(productRepo, orderRepo, idService);
@@ -26,15 +27,53 @@ class ShopServiceTest {
         Order actual = shopService.addOrder(productsIds);
 
         //THEN
-        Order expected = new Order("-1", List.of(new Product("1", "Apfel")), Instant.now(), Order.OrderStatus.PROCESSING);
+        Order expected = new Order("-1", List.of(new Product("1", "Apfel", new BigDecimal("10"))), Instant.now(), Order.OrderStatus.PROCESSING);
         assertEquals(expected.products(), actual.products());
         assertNotNull(expected.id());
     }
 
     @Test
-    void addOrderTest_whenInvalidProductId_expectNull() {
+    void addOrderTest_whenInvalidProductId_expectException() {
         //GIVEN
         List<String> productsIds = List.of("1", "2");
+
+        assertThrows(
+                //THEN
+                NoSuchProductException.class,
+
+                //WHEN
+                ()->shopService.addOrder(productsIds));
+    }
+
+    @Test
+    void addOrderTest_whenOrder1_thenQuantityMinus1() {
+        //GIVEN
+        List<String> productsIds = List.of("1");
+        shopService.addOrder(productsIds);
+        shopService.addOrder(productsIds);
+        shopService.addOrder(productsIds);
+
+        //THEN
+        BigDecimal actual = productRepo.getProductById("1").get().quantity();
+
+        //WHEN
+        assertEquals(new BigDecimal("7"), actual);
+    }
+
+    @Test
+    void addOrderTest_whenProductNotInStock_thenThrowException() {
+        //GIVEN
+        List<String> productsIds = List.of("1");
+        shopService.addOrder(productsIds);
+        shopService.addOrder(productsIds);
+        shopService.addOrder(productsIds);
+        shopService.addOrder(productsIds);
+        shopService.addOrder(productsIds);
+        shopService.addOrder(productsIds);
+        shopService.addOrder(productsIds);
+        shopService.addOrder(productsIds);
+        shopService.addOrder(productsIds);
+        shopService.addOrder(productsIds);
 
         assertThrows(
                 //THEN

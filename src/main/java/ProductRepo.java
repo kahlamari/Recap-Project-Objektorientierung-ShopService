@@ -1,3 +1,4 @@
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -7,7 +8,7 @@ public class ProductRepo {
 
     public ProductRepo() {
         products = new ArrayList<>();
-        products.add(new Product("1", "Apfel"));
+        products.add(new Product("1", "Apfel", new BigDecimal("10")));
     }
 
     public List<Product> getProducts() {

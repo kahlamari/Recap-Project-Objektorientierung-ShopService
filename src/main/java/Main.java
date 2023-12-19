@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -15,11 +16,11 @@ public class Main {
         IdService idService = new IdService();
         ShopService shopService = new ShopService(productRepo, orderRepo, idService);
 
-        Product pear = new Product("2", "Pear");
+        Product pear = new Product("2", "Pear", new BigDecimal("1"));
         productRepo.addProduct(pear);
-        Product banana = new Product("3", "Banana");
+        Product banana = new Product("3", "Banana", new BigDecimal("1"));
         productRepo.addProduct(banana);
-        Product orange = new Product("4", "Orange");
+        Product orange = new Product("4", "Orange", new BigDecimal("1"));
         productRepo.addProduct(orange);
 
         readTransactions();
