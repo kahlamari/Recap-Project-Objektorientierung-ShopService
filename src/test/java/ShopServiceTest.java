@@ -86,4 +86,70 @@ class ShopServiceTest {
         //THEN
         assertEquals(actual, expected);
     }
+
+    @Test
+    void getOldestOrderPerStatusTest_when6Orders_then3ElementMap() {
+        //GIVEN
+        List<String> productsIds = List.of("1");
+        Order order1older = shopService.addOrder(productsIds);
+        Order order2older = shopService.addOrder(productsIds);
+        Order order3older = shopService.addOrder(productsIds);
+        shopService.addOrder(productsIds);
+        Order order2 = shopService.addOrder(productsIds);
+        Order order3 = shopService.addOrder(productsIds);
+
+
+        order2older = shopService.updateOrder(order2older.id(), Order.OrderStatus.IN_DELIVERY);
+        shopService.updateOrder(order2.id(), Order.OrderStatus.IN_DELIVERY);
+        order3older = shopService.updateOrder(order3older.id(), Order.OrderStatus.COMPLETED);
+        shopService.updateOrder(order3.id(), Order.OrderStatus.COMPLETED);
+
+        Map<Order.OrderStatus, Order> expected = new HashMap<>();
+        expected.put(Order.OrderStatus.PROCESSING, order1older);
+        expected.put(Order.OrderStatus.IN_DELIVERY, order2older);
+        expected.put(Order.OrderStatus.COMPLETED, order3older);
+
+
+        //WHEN
+        Map<Order.OrderStatus, Order> actual = shopService.getOldestOrderPerStatus();
+
+        //THEN
+        assertEquals(expected, actual);
+
+    }
+    @Test
+    void getOldestOrderPerStatusTest_when4Orders_then2ElementMap() {
+        //GIVEN
+        List<String> productsIds = List.of("1");
+        Order order1older = shopService.addOrder(productsIds);
+        Order order2older = shopService.addOrder(productsIds);
+        shopService.addOrder(productsIds);
+        Order order2 = shopService.addOrder(productsIds);
+
+
+        order2older = shopService.updateOrder(order2older.id(), Order.OrderStatus.IN_DELIVERY);
+        shopService.updateOrder(order2.id(), Order.OrderStatus.IN_DELIVERY);
+
+        Map<Order.OrderStatus, Order> expected = new HashMap<>();
+        expected.put(Order.OrderStatus.PROCESSING, order1older);
+        expected.put(Order.OrderStatus.IN_DELIVERY, order2older);
+
+
+        //WHEN
+        Map<Order.OrderStatus, Order> actual = shopService.getOldestOrderPerStatus();
+
+        //THEN
+        assertEquals(expected, actual);
+    }
+    @Test
+    void getOldestOrderPerStatusTest_whenNoOrders_thenEmptyMap() {
+        //GIVEN
+        Map<Order.OrderStatus, Order> expected = new HashMap<>();
+
+        //WHEN
+        Map<Order.OrderStatus, Order> actual = shopService.getOldestOrderPerStatus();
+
+        //THEN
+        assertEquals(expected, actual);
+    }
 }

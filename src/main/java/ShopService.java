@@ -1,9 +1,7 @@
 import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -36,5 +34,16 @@ public class ShopService {
         orderRepo.removeOrder(id);
         orderRepo.addOrder(updatedOrder);
         return updatedOrder;
+    }
+
+    public Map<Order.OrderStatus,Order> getOldestOrderPerStatus() {
+        Map<Order.OrderStatus, Order> orderStatusOrderMap = new HashMap<>();
+
+        for (Order.OrderStatus orderStatus : Order.OrderStatus.values()) {
+            searchByOrderStatus(orderStatus).stream()
+                    .min((o1, o2) -> o1.orderTimestamp().isAfter(o2.orderTimestamp()) ? 1 : -1)
+                    .ifPresent(order -> orderStatusOrderMap.put(orderStatus, order));
+        }
+        return orderStatusOrderMap;
     }
 }
