@@ -41,7 +41,7 @@ public class ShopService {
 
         for (Order.OrderStatus orderStatus : Order.OrderStatus.values()) {
             searchByOrderStatus(orderStatus).stream()
-                    .min((o1, o2) -> o1.orderTimestamp().isAfter(o2.orderTimestamp()) ? 1 : -1)
+                    .min(Comparator.comparing(Order::orderTimestamp))
                     .ifPresent(order -> orderStatusOrderMap.put(orderStatus, order));
         }
         return orderStatusOrderMap;
